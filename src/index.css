@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-primary: #0a0a0a;
+  --color-bg-secondary: #111111;
+  --color-bg-tertiary: #1a1a1a;
+  --color-bg-card: #141414;
+  --color-text-primary: #f0f0f0;
+  --color-text-secondary: #a0a0a0;
+  --color-text-muted: #5a5a5a;
+  --color-accent: #e53e3e;
+  --color-accent-hover: #fc4e4e;
+  --color-correct: #0d3320;
+  --color-slow: #3d2e00;
+  --color-wrong: #3d0a0a;
+  --color-success: #34d399;
+  --color-warning: #fbbf24;
+  --color-danger: #f87171;
+  --color-border: #2a2a2a;
+  --color-btn-bg: #1a1a1a;
+  --color-btn-border: #e53e3e;
+  --font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", "Courier New", monospace;
+}
+
+@layer base {
+  body {
+    @apply m-0 bg-bg-primary text-text-primary font-mono antialiased;
+  }
+
+  * {
+    @apply box-border;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-text-muted;
+  }
+
+  ::selection {
+    @apply bg-accent/30 text-white;
+  }
+}
+
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-20deg);
+  }
+  75% {
+    transform: rotate(90deg);
+  }
+}
