@@ -1,7 +1,8 @@
 import { useState } from "react";
-import ControllerListener from "./throwbreak/ControllerListener";
+import ControllerListener from "./components/ControllerListener";
+import { GAME_CONFIG, HISTORY_BUFFER_SIZE } from "./config";
 
-const msPerFrame = 1000 / 60;
+const msPerFrame = 1000 / GAME_CONFIG.framesPerSecond;
 
 type Data = { time: number; keys: string[] }[];
 var data: Data = [];
@@ -9,7 +10,7 @@ var data: Data = [];
 export default function InputHistory() {
   const [_data, _updateData] = useState(data);
   const updateData = (newData: Data) => {
-    newData = newData.slice(-1000);
+    newData = newData.slice(-HISTORY_BUFFER_SIZE);
     data = newData;
     _updateData(newData);
   };
@@ -36,7 +37,7 @@ export default function InputHistory() {
   }
 
   return (
-    <div className="font-mono text-white bg-black h-dvh w-dvw flex text-lg">
+    <div className="font-mono text-text-primary bg-bg-primary h-dvh w-dvw flex text-lg">
       <div
         className="m-4 flex-1 overflow-auto outline-none"
         tabIndex={1}
@@ -49,17 +50,17 @@ export default function InputHistory() {
         onKeyUp={(e) => update(e.key, false)}
       >
         <h2
-          className="text-xl font-black mb-4 text-red-500 uppercase italic tracking-wider"
+          className="text-xl font-black mb-4 text-accent uppercase italic tracking-wider"
           style={{ transform: "skewX(-8deg)" }}
         >
           Input History
         </h2>
-        <p className="text-gray-600 text-sm mb-4">
+        <p className="text-text-muted text-sm mb-4">
           Press Escape to reset. Press any key or use controller.
         </p>
         <table className="text-sm">
           <thead>
-            <tr className="text-gray-600 text-xs uppercase tracking-wider">
+            <tr className="text-text-muted text-xs uppercase tracking-wider">
               <td className="pr-6 py-1">Frames</td>
               <td className="py-1">Keys</td>
             </tr>
@@ -99,14 +100,14 @@ export default function InputHistory() {
               .data.map((d, i) => (
                 <tr
                   key={i}
-                  className="text-gray-400 border-b border-red-900/20"
+                  className="text-text-secondary border-b border-border-subtle"
                 >
-                  <td className="pr-6 py-1 tabular-nums text-gray-600">
+                  <td className="pr-6 py-1 tabular-nums text-text-muted">
                     {d.time}
                   </td>
-                  <td className="py-1 font-bold text-white">
+                  <td className="py-1 font-bold text-text-primary">
                     {d.keys[0] || (
-                      <span className="text-gray-600 italic">none</span>
+                      <span className="text-text-muted italic">none</span>
                     )}
                   </td>
                 </tr>

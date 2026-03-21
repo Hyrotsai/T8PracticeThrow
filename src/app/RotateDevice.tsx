@@ -32,9 +32,9 @@ export default function RotateDevice(props: { children: ReactNode }) {
 
   if (showOverlay) {
     return (
-      <div className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center px-8 text-center font-mono">
+      <div className="fixed inset-0 z-50 bg-bg-primary flex flex-col items-center justify-center px-8 text-center font-mono">
         {/* Rotate icon */}
-        <div className="mb-8 text-red-500">
+        <div className="mb-8 text-accent">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="80"
@@ -54,7 +54,7 @@ export default function RotateDevice(props: { children: ReactNode }) {
         </div>
 
         {/* Arrow hint */}
-        <div className="mb-6 text-red-500/50">
+        <div className="mb-6 text-accent-muted">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="48"
@@ -72,14 +72,14 @@ export default function RotateDevice(props: { children: ReactNode }) {
         </div>
 
         <h2
-          className="text-xl font-black text-white mb-3 uppercase italic tracking-wider"
+          className="text-xl font-black text-text-primary mb-3 uppercase italic tracking-wider"
           style={{ transform: "skewX(-8deg)" }}
         >
           Rotate your device
         </h2>
-        <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
+        <p className="text-text-secondary text-sm leading-relaxed max-w-xs">
           For the best experience, please hold your device in
-          <span className="text-red-400 font-bold"> landscape </span>
+          <span className="text-accent font-bold"> landscape </span>
           mode.
         </p>
       </div>

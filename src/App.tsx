@@ -1,7 +1,13 @@
-import Main from "./throwbreak420/Main";
+import Main from "./app/Main";
+import UpdatePrompt from "./app/components/UpdatePrompt";
 
 function App() {
-  return <Main />;
+  return (
+    <>
+      <Main />
+      <UpdatePrompt />
+    </>
+  );
 }
 
 export default App;

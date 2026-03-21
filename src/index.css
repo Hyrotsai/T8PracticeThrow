@@ -1,25 +1,168 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg-primary: #0a0a0a;
-  --color-bg-secondary: #111111;
-  --color-bg-tertiary: #1a1a1a;
-  --color-bg-card: #141414;
-  --color-text-primary: #f0f0f0;
-  --color-text-secondary: #a0a0a0;
-  --color-text-muted: #5a5a5a;
-  --color-accent: #e53e3e;
-  --color-accent-hover: #fc4e4e;
-  --color-correct: #0d3320;
-  --color-slow: #3d2e00;
-  --color-wrong: #3d0a0a;
-  --color-success: #34d399;
-  --color-warning: #fbbf24;
-  --color-danger: #f87171;
-  --color-border: #2a2a2a;
-  --color-btn-bg: #1a1a1a;
-  --color-btn-border: #e53e3e;
+  --color-bg-primary: var(--t-bg-primary);
+  --color-bg-secondary: var(--t-bg-secondary);
+  --color-bg-tertiary: var(--t-bg-tertiary);
+  --color-bg-card: var(--t-bg-card);
+  --color-bg-elevated: var(--t-bg-elevated);
+  --color-bg-overlay: var(--t-bg-overlay);
+  --color-bg-surface: var(--t-bg-surface);
+  --color-text-primary: var(--t-text-primary);
+  --color-text-secondary: var(--t-text-secondary);
+  --color-text-muted: var(--t-text-muted);
+  --color-text-inverse: var(--t-text-inverse);
+  --color-accent: var(--t-accent);
+  --color-accent-hover: var(--t-accent-hover);
+  --color-accent-muted: var(--t-accent-muted);
+  --color-accent-subtle: var(--t-accent-subtle);
+  --color-accent-border: var(--t-accent-border);
+  --color-accent-border-hover: var(--t-accent-border-hover);
+  --color-correct: var(--t-correct);
+  --color-slow: var(--t-slow);
+  --color-wrong: var(--t-wrong);
+  --color-success: var(--t-success);
+  --color-warning: var(--t-warning);
+  --color-danger: var(--t-danger);
+  --color-border: var(--t-border);
+  --color-border-subtle: var(--t-border-subtle);
+  --color-btn-bg: var(--t-btn-bg);
+  --color-btn-border: var(--t-btn-border);
+  --color-btn-text: var(--t-btn-text);
+  --color-btn-hover-bg: var(--t-btn-hover-bg);
+  --color-btn-hover-text: var(--t-btn-hover-text);
+  --color-drawer-bg: var(--t-drawer-bg);
+  --color-drawer-border: var(--t-drawer-border);
+  --color-selected-bg: var(--t-selected-bg);
+  --color-selected-text: var(--t-selected-text);
+  --color-selected-border: var(--t-selected-border);
+  --color-unselected-text: var(--t-unselected-text);
+  --color-unselected-border: var(--t-unselected-border);
   --font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", "Courier New", monospace;
+}
+
+/* ============ DARK THEME (Default) ============ */
+:root,
+[data-theme="dark"] {
+  --t-bg-primary: #0a0a0a;
+  --t-bg-secondary: #111111;
+  --t-bg-tertiary: #1a1a1a;
+  --t-bg-card: #141414;
+  --t-bg-elevated: rgba(0, 0, 0, 0.8);
+  --t-bg-overlay: rgba(0, 0, 0, 0.5);
+  --t-bg-surface: rgba(0, 0, 0, 0.5);
+  --t-text-primary: #f0f0f0;
+  --t-text-secondary: #a0a0a0;
+  --t-text-muted: #5a5a5a;
+  --t-text-inverse: #0a0a0a;
+  --t-accent: #e53e3e;
+  --t-accent-hover: #fc4e4e;
+  --t-accent-muted: rgba(229, 62, 62, 0.5);
+  --t-accent-subtle: rgba(229, 62, 62, 0.1);
+  --t-accent-border: rgba(127, 29, 29, 0.5);
+  --t-accent-border-hover: #e53e3e;
+  --t-correct: #0d3320;
+  --t-slow: #3d2e00;
+  --t-wrong: #3d0a0a;
+  --t-success: #34d399;
+  --t-warning: #fbbf24;
+  --t-danger: #f87171;
+  --t-border: #2a2a2a;
+  --t-border-subtle: rgba(255, 255, 255, 0.05);
+  --t-btn-bg: rgba(255, 255, 255, 0.05);
+  --t-btn-border: rgba(127, 29, 29, 0.5);
+  --t-btn-text: #9ca3af;
+  --t-btn-hover-bg: rgba(229, 62, 62, 0.1);
+  --t-btn-hover-text: #f87171;
+  --t-drawer-bg: linear-gradient(to bottom, #030712, #000000);
+  --t-drawer-border: rgba(127, 29, 29, 0.4);
+  --t-selected-bg: rgba(220, 38, 38, 0.2);
+  --t-selected-text: #f87171;
+  --t-selected-border: #ef4444;
+  --t-unselected-text: #6b7280;
+  --t-unselected-border: rgba(127, 29, 29, 0.3);
+}
+
+/* ============ LIGHT THEME ============ */
+[data-theme="light"] {
+  --t-bg-primary: #f5f5f5;
+  --t-bg-secondary: #e8e8e8;
+  --t-bg-tertiary: #dcdcdc;
+  --t-bg-card: #ffffff;
+  --t-bg-elevated: rgba(255, 255, 255, 0.95);
+  --t-bg-overlay: rgba(0, 0, 0, 0.3);
+  --t-bg-surface: rgba(255, 255, 255, 0.7);
+  --t-text-primary: #1a1a1a;
+  --t-text-secondary: #555555;
+  --t-text-muted: #999999;
+  --t-text-inverse: #f0f0f0;
+  --t-accent: #2563eb;
+  --t-accent-hover: #3b82f6;
+  --t-accent-muted: rgba(37, 99, 235, 0.5);
+  --t-accent-subtle: rgba(37, 99, 235, 0.08);
+  --t-accent-border: rgba(37, 99, 235, 0.3);
+  --t-accent-border-hover: #2563eb;
+  --t-correct: #d1fae5;
+  --t-slow: #fef3c7;
+  --t-wrong: #fee2e2;
+  --t-success: #059669;
+  --t-warning: #d97706;
+  --t-danger: #dc2626;
+  --t-border: #d1d5db;
+  --t-border-subtle: rgba(0, 0, 0, 0.06);
+  --t-btn-bg: rgba(0, 0, 0, 0.04);
+  --t-btn-border: rgba(37, 99, 235, 0.3);
+  --t-btn-text: #555555;
+  --t-btn-hover-bg: rgba(37, 99, 235, 0.08);
+  --t-btn-hover-text: #2563eb;
+  --t-drawer-bg: linear-gradient(to bottom, #ffffff, #f0f0f0);
+  --t-drawer-border: rgba(37, 99, 235, 0.2);
+  --t-selected-bg: rgba(37, 99, 235, 0.12);
+  --t-selected-text: #2563eb;
+  --t-selected-border: #3b82f6;
+  --t-unselected-text: #9ca3af;
+  --t-unselected-border: rgba(37, 99, 235, 0.15);
+}
+
+/* ============ TEKKEN THEME ============ */
+[data-theme="tekken"] {
+  --t-bg-primary: #0b0e17;
+  --t-bg-secondary: #111627;
+  --t-bg-tertiary: #1a2035;
+  --t-bg-card: #121830;
+  --t-bg-elevated: rgba(11, 14, 23, 0.9);
+  --t-bg-overlay: rgba(0, 0, 0, 0.6);
+  --t-bg-surface: rgba(11, 14, 23, 0.6);
+  --t-text-primary: #e0e8ff;
+  --t-text-secondary: #8892b0;
+  --t-text-muted: #4a5568;
+  --t-text-inverse: #0b0e17;
+  --t-accent: #f59e0b;
+  --t-accent-hover: #fbbf24;
+  --t-accent-muted: rgba(245, 158, 11, 0.5);
+  --t-accent-subtle: rgba(245, 158, 11, 0.1);
+  --t-accent-border: rgba(245, 158, 11, 0.4);
+  --t-accent-border-hover: #f59e0b;
+  --t-correct: #0d3320;
+  --t-slow: #3d2e00;
+  --t-wrong: #3d0a0a;
+  --t-success: #34d399;
+  --t-warning: #fbbf24;
+  --t-danger: #f87171;
+  --t-border: #1e2a4a;
+  --t-border-subtle: rgba(255, 255, 255, 0.05);
+  --t-btn-bg: rgba(255, 255, 255, 0.05);
+  --t-btn-border: rgba(245, 158, 11, 0.4);
+  --t-btn-text: #8892b0;
+  --t-btn-hover-bg: rgba(245, 158, 11, 0.1);
+  --t-btn-hover-text: #f59e0b;
+  --t-drawer-bg: linear-gradient(to bottom, #0f1629, #0b0e17);
+  --t-drawer-border: rgba(245, 158, 11, 0.3);
+  --t-selected-bg: rgba(245, 158, 11, 0.15);
+  --t-selected-text: #f59e0b;
+  --t-selected-border: #f59e0b;
+  --t-unselected-text: #6b7280;
+  --t-unselected-border: rgba(245, 158, 11, 0.2);
 }
 
 @layer base {
@@ -49,7 +192,8 @@
   }
 
   ::selection {
-    @apply bg-accent/30 text-white;
+    background: var(--t-accent-muted);
+    color: var(--t-text-primary);
   }
 }
 
@@ -63,4 +207,19 @@
   75% {
     transform: rotate(90deg);
   }
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@utility animate-slide-down {
+  animation: slide-down 0.3s ease-out both;
 }

@@ -1,3 +1,5 @@
+import { REPO_URL } from "../config";
+
 export default function UserGuide(props: {
   updateUserGuideIsOpen: (userGuideIsOpen: boolean) => void;
 }) {
@@ -6,8 +8,8 @@ export default function UserGuide(props: {
       className="w-full flex overflow-y-auto relative bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: "url('/tekken8.jpg')" }}
     >
-      {/* Dark overlay with red tint */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-red-950/40" />
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-black/50" />
 
       <div className="self-center flex-1 max-h-full px-4 relative z-10">
         <div className="max-w-xl mx-auto py-8 landscape:py-4 flex flex-col items-center text-center">
@@ -23,10 +25,10 @@ export default function UserGuide(props: {
           >
             <span className="text-white">T</span>
             <span
-              className="text-red-500"
+              className="text-accent"
               style={{
                 textShadow:
-                  "0 0 20px rgba(239,68,68,0.5), 2px 2px 0 rgba(0,0,0,0.8), 4px 4px 8px rgba(0,0,0,0.5)",
+                  "0 0 20px var(--t-accent-muted), 2px 2px 0 rgba(0,0,0,0.8), 4px 4px 8px rgba(0,0,0,0.5)",
               }}
             >
               8
@@ -34,10 +36,10 @@ export default function UserGuide(props: {
             <span className="text-white"> PRACTICE</span>
             <br />
             <span
-              className="text-red-500"
+              className="text-accent"
               style={{
                 textShadow:
-                  "0 0 20px rgba(239,68,68,0.5), 2px 2px 0 rgba(0,0,0,0.8), 4px 4px 8px rgba(0,0,0,0.5)",
+                  "0 0 20px var(--t-accent-muted), 2px 2px 0 rgba(0,0,0,0.8), 4px 4px 8px rgba(0,0,0,0.5)",
               }}
             >
               THROW
@@ -45,14 +47,14 @@ export default function UserGuide(props: {
           </h1>
 
           {/* Inspiration note */}
-          <div className="bg-black/50 backdrop-blur-sm rounded border-l-2 border-red-500 px-5 py-4 mb-10 max-w-md">
+          <div className="bg-black/50 backdrop-blur-sm rounded border-l-2 border-accent px-5 py-4 mb-10 max-w-md">
             <p className="text-gray-300 text-sm leading-relaxed">
               This project is inspired by the original{" "}
               <a
-                href="https://github.com/dcep93/throwbreak420/"
+                href={REPO_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-red-400 hover:text-red-300 font-semibold transition-colors underline underline-offset-2"
+                className="text-accent hover:text-accent-hover font-semibold transition-colors underline underline-offset-2"
               >
                 ThrowBreak420
               </a>{" "}
@@ -68,12 +70,11 @@ export default function UserGuide(props: {
               onClick={() => props.updateUserGuideIsOpen(false)}
               className="
                 px-10 py-3 font-bold text-sm uppercase tracking-wider
-                bg-red-600 hover:bg-red-500
+                bg-accent hover:bg-accent-hover
                 text-white
                 transition-all duration-200
                 cursor-pointer
-                shadow-lg shadow-red-600/30
-                hover:shadow-red-500/50
+                shadow-lg
                 active:scale-95
               "
               style={{ clipPath: "polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)" }}
@@ -82,7 +83,7 @@ export default function UserGuide(props: {
             </button>
 
             <a
-              href="https://github.com/dcep93/throwbreak420/"
+              href={REPO_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="
