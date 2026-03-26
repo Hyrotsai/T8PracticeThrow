@@ -236,8 +236,12 @@ export function useGame({ mainRef, backupRef, onStartTraining, isTraining }: Use
   const syncTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [countdown, updateCountdown] = useState<3 | 2 | 1 | null>(null);
   const countdownRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const countdownValueRef = useRef<3 | 2 | 1 | null>(null);
+  countdownValueRef.current = countdown;
   const [isRankingActive, setIsRankingActive] = useState(false);
   const onSyncCompleteRef = useRef<() => void>(() => {});
+  const userGuideIsOpenRef = useRef(false);
+  userGuideIsOpenRef.current = userGuideIsOpen;
 
   // Apply theme on mount
   useEffect(() => {
@@ -293,7 +297,15 @@ export function useGame({ mainRef, backupRef, onStartTraining, isTraining }: Use
     initialized = true;
     prepVideo();
     if (controllerCleanup) controllerCleanup();
-    controllerCleanup = ControllerListener((key, pressed) => onKeyDownHelper(key, pressed));
+    // Gamepad inputs ('1', '2', '1+2') go straight to handleInput —
+    // no shortcut lookup, no set-button flow, no keysPressed debounce needed.
+    controllerCleanup = ControllerListener((input, pressed) => {
+      if (!pressed) return;
+      if (countdownValueRef.current !== null) return;
+      if (userGuideIsOpenRef.current) return;
+      if (!isTrainingModule) return;
+      handleInput(input);
+    });
   };
 
   useEffect(() => {

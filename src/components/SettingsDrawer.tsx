@@ -6,6 +6,7 @@ import RankingModal from "./RankingModal";
 import { getTopTen, type RankingEntry } from "../services/rankingService";
 import { loadSessionHistory } from "../hooks/useGame";
 import type { SessionSummary } from "../config";
+import ChangelogModal, { hasUnseenChangelog } from "./ChangelogModal";
 
 const RANKING_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
@@ -62,6 +63,7 @@ export default function SettingsDrawer(props: {
   const [sessionHistory, setSessionHistory] = useState<SessionSummary[]>([]);
   const [isAtBottom, setIsAtBottom] = useState(false);
   const statsScrollRef = useRef<HTMLDivElement>(null);
+  const [changelogOpen, setChangelogOpen] = useState(() => hasUnseenChangelog());
   const isRankingActive = props.get().isRankingActive;
 
   const handleStatsScroll = useCallback(() => {
@@ -87,6 +89,7 @@ export default function SettingsDrawer(props: {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return;
+      if (changelogOpen) { setChangelogOpen(false); return; }
       if (statsOpen) { closeStats(); return; }
       if (circleOpen) { closeCircle(); return; }
       if (isOpen) { setIsOpen(false); return; }
@@ -94,7 +97,7 @@ export default function SettingsDrawer(props: {
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, statsOpen, circleOpen]);
+  }, [isOpen, statsOpen, circleOpen, changelogOpen]);
 
   const closeCircle = () => {
     setCircleOpen(false);
@@ -504,6 +507,11 @@ export default function SettingsDrawer(props: {
         </div>
       )}
 
+      {/* Changelog Modal */}
+      {changelogOpen && (
+        <ChangelogModal onClose={() => setChangelogOpen(false)} />
+      )}
+
       {/* Gear Icon Button - Fixed top right, no layout space */}
       <button
         onClick={() => !isRankingActive && setIsOpen(true)}
@@ -863,6 +871,34 @@ export default function SettingsDrawer(props: {
 
           {/* Divider */}
           <div className="border-t border-border-subtle" />
+
+          {/* What's New */}
+          <div>
+            <button
+              onClick={() => {
+                setChangelogOpen(true);
+                setIsOpen(false);
+              }}
+              className="
+                relative flex items-center justify-center gap-2
+                w-full px-4 py-2.5 font-bold uppercase text-xs md:text-sm tracking-wider
+                transition-all duration-150 cursor-pointer select-none border
+                text-btn-text border-unselected-border hover:border-accent-border-hover hover:text-btn-hover-text hover:bg-btn-hover-bg
+              "
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+                <polyline points="10 9 9 9 8 9" />
+              </svg>
+              What's New
+              {hasUnseenChangelog() && (
+                <span className="absolute top-1.5 right-2 w-2 h-2 rounded-full bg-danger" />
+              )}
+            </button>
+          </div>
 
           {/* Intro */}
           <div>

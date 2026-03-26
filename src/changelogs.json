@@ -1,0 +1,82 @@
+[
+  {
+    "version": "1.1.0",
+    "date": "2026-03-26",
+    "entries": [
+      {
+        "type": "new",
+        "text": "Gamepad support — Xbox, PS4/PS5 and generic controllers work out of the box. □/X = 1, △/Y = 2, □+△ / X+Y = 1+2"
+      },
+      {
+        "type": "new",
+        "text": "Session stats modal now shows a scroll indicator on mobile when there is more content below"
+      },
+      {
+        "type": "new",
+        "text": "Changelog window — shows what's new on each update"
+      },
+      {
+        "type": "improved",
+        "text": "Ranking mode now always starts with default config regardless of your current settings"
+      },
+      {
+        "type": "improved",
+        "text": "Your config is saved before entering ranking and fully restored when you go back to training"
+      },
+      {
+        "type": "improved",
+        "text": "\"Back to training\" now properly resets the game state and prepares the next video"
+      },
+      {
+        "type": "improved",
+        "text": "\"Start Training\" resets all session stats so every session starts clean"
+      },
+      {
+        "type": "improved",
+        "text": "Stop button renamed to \"Reload Training\" for clarity"
+      }
+    ]
+  },
+  {
+    "version": "1.0.0",
+    "date": "2026-01-01",
+    "entries": [
+      {
+        "type": "new",
+        "text": "Initial release — throw break practice for Tekken 8"
+      },
+      {
+        "type": "new",
+        "text": "Free training mode with adjustable speed and fail delay"
+      },
+      {
+        "type": "new",
+        "text": "Global ranking with streak submission"
+      },
+      {
+        "type": "new",
+        "text": "Session stats with accuracy breakdown by throw type"
+      },
+      {
+        "type": "new",
+        "text": "Session history — last 20 sessions saved locally"
+      },
+      {
+        "type": "new",
+        "text": "Config persistence across page reloads"
+      },
+      {
+        "type": "new",
+        "text": "Real-time frame indicator during training"
+      },
+      {
+        "type": "new",
+        "text": "Dark, Light and Tekken themes"
+      },
+      {
+        "type": "new",
+        "text": "PWA — works offline and installable on mobile"
+      }
+    ]
+  }
+]

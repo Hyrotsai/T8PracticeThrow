@@ -15,7 +15,7 @@ export interface SessionSummary {
 }
 
 // ─── App Identity ────────────────────────────────────────────
-export const VERSION = "1.0.0";
+export const VERSION = "1.1.0";
 
 // ─── Game Timing / Logic ─────────────────────────────────────
 export const GAME_CONFIG = {
@@ -78,4 +78,6 @@ export const STORAGE_KEYS = {
   sessionHistory: "sessionHistory",
   // Ranking cache
   rankingCache: "rankingCache",
+  // Changelog
+  lastSeenVersion: "lastSeenVersion",
 } as const;
