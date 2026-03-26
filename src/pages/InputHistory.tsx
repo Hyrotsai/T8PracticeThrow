@@ -1,14 +1,17 @@
-import { useState } from "react";
-import ControllerListener from "./components/ControllerListener";
-import { GAME_CONFIG, HISTORY_BUFFER_SIZE } from "./config";
+import { useEffect, useRef, useState } from "react";
+import ControllerListener from "../utils/controllerListener";
+import { GAME_CONFIG, HISTORY_BUFFER_SIZE } from "../config";
 
 const msPerFrame = 1000 / GAME_CONFIG.framesPerSecond;
 
 type Data = { time: number; keys: string[] }[];
-var data: Data = [];
+let data: Data = [];
 
 export default function InputHistory() {
   const [_data, _updateData] = useState(data);
+  const divRef = useRef<HTMLDivElement>(null);
+  const updateRef = useRef<(key: string, pressed: boolean) => void>(() => {});
+
   const updateData = (newData: Data) => {
     newData = newData.slice(-HISTORY_BUFFER_SIZE);
     data = newData;
@@ -36,16 +39,30 @@ export default function InputHistory() {
     updateData(data.concat({ time: Date.now(), keys }));
   }
 
+  // Keep updateRef in sync so ControllerListener always calls the latest update
+  updateRef.current = update;
+
+  // Initialize data and focus on mount
+  useEffect(() => {
+    if (data.length === 0) reset();
+    divRef.current?.focus();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Set up ControllerListener once, with cleanup
+  useEffect(() => {
+    const cleanup = ControllerListener((key, pressed) =>
+      updateRef.current(key, pressed)
+    );
+    return cleanup;
+  }, []);
+
   return (
     <div className="font-mono text-text-primary bg-bg-primary h-dvh w-dvw flex text-lg">
       <div
         className="m-4 flex-1 overflow-auto outline-none"
-        tabIndex={1}
-        ref={(c) => {
-          if (data.length === 0) reset();
-          c?.focus();
-          ControllerListener(update);
-        }}
+        tabIndex={0}
+        ref={divRef}
         onKeyDown={(e) => update(e.key, true)}
         onKeyUp={(e) => update(e.key, false)}
       >

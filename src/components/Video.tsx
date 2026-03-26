@@ -1,4 +1,5 @@
 import { RefObject } from "react";
+import { initialized, initialize, onEnded, speed } from "../hooks/useGame";
 
 export default function Video(props: {
   get: () => {
@@ -8,15 +9,18 @@ export default function Video(props: {
     initialized: boolean;
     initialize: () => void;
     speed: number;
+    isTraining: boolean;
   };
 }) {
+  // Suppress unused import warnings — these are re-exported for consumers
+  void initialized; void initialize; void onEnded; void speed;
+
   return (
     <div className="h-full w-full flex items-center justify-center">
       <video
         ref={props.get().mainRef}
         className="absolute max-h-full max-w-full z-[1] object-contain"
         playsInline
-        autoPlay
         muted
         onEnded={() => props.get().onEnded()}
       />
@@ -24,7 +28,6 @@ export default function Video(props: {
         src="video/blank.mp4"
         ref={props.get().backupRef}
         className="absolute max-h-full max-w-full object-contain"
-        autoPlay
         playsInline
         onCanPlay={() => {
           const t = props.get().backupRef.current!;
@@ -36,6 +39,9 @@ export default function Video(props: {
           const video = props.get().mainRef.current!;
           video.src = t.src;
           video.playbackRate = props.get().speed;
+          if (props.get().isTraining) {
+            video.play();
+          }
         }}
       />
     </div>

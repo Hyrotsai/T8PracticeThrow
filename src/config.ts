@@ -1,3 +1,19 @@
+// ─── Session History ─────────────────────────────────────────
+export const MAX_SAVED_SESSIONS = 20;
+
+export interface SessionSummary {
+  date: number;          // epoch ms
+  attempts: number;
+  correct: number;
+  slow: number;
+  wrong: number;
+  bestStreak: number;
+  avgFrame: number | null;
+  byType: {
+    [throwType: string]: { attempts: number; correct: number; slow: number; wrong: number };
+  };
+}
+
 // ─── App Identity ────────────────────────────────────────────
 export const VERSION = "1.0.0";
 
@@ -50,4 +66,16 @@ export const STORAGE_KEYS = {
   theme: "theme",
   streak: "streak",
   hasStarted: "hasStarted",
+  soundEnabled: "soundEnabled",
+  rankingNick: "rankingNick",
+  // Persisted game config
+  isP1: "isP1",
+  isStanding: "isStanding",
+  possibles: "possibles",
+  speed: "speed",
+  failDelay: "failDelay",
+  // Session history
+  sessionHistory: "sessionHistory",
+  // Ranking cache
+  rankingCache: "rankingCache",
 } as const;

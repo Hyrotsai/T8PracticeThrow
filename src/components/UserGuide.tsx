@@ -13,23 +13,19 @@ export default function UserGuide(props: {
 
       <div className="self-center flex-1 max-h-full px-4 relative z-10">
         <div className="max-w-xl mx-auto py-8 landscape:py-4 flex flex-col items-center text-center">
-          {/* Title — Tekken 8 style */}
+          {/* Title */}
           <h1
             className="mb-10 uppercase font-black italic tracking-tighter leading-none"
             style={{
               fontSize: "clamp(2.5rem, 8vw, 5rem)",
               transform: "skewX(-8deg)",
-              textShadow:
-                "2px 2px 0 rgba(0,0,0,0.8), 4px 4px 8px rgba(0,0,0,0.5)",
+              textShadow: "2px 2px 0 rgba(0,0,0,0.8), 4px 4px 8px rgba(0,0,0,0.5)",
             }}
           >
             <span className="text-white">T</span>
             <span
               className="text-accent"
-              style={{
-                textShadow:
-                  "0 0 20px var(--t-accent-muted), 2px 2px 0 rgba(0,0,0,0.8), 4px 4px 8px rgba(0,0,0,0.5)",
-              }}
+              style={{ textShadow: "0 0 20px var(--t-accent-muted), 2px 2px 0 rgba(0,0,0,0.8), 4px 4px 8px rgba(0,0,0,0.5)" }}
             >
               8
             </span>
@@ -37,10 +33,7 @@ export default function UserGuide(props: {
             <br />
             <span
               className="text-accent"
-              style={{
-                textShadow:
-                  "0 0 20px var(--t-accent-muted), 2px 2px 0 rgba(0,0,0,0.8), 4px 4px 8px rgba(0,0,0,0.5)",
-              }}
+              style={{ textShadow: "0 0 20px var(--t-accent-muted), 2px 2px 0 rgba(0,0,0,0.8), 4px 4px 8px rgba(0,0,0,0.5)" }}
             >
               THROW
             </span>
@@ -68,32 +61,16 @@ export default function UserGuide(props: {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <button
               onClick={() => props.updateUserGuideIsOpen(false)}
-              className="
-                px-10 py-3 font-bold text-sm uppercase tracking-wider
-                bg-accent hover:bg-accent-hover
-                text-white
-                transition-all duration-200
-                cursor-pointer
-                shadow-lg
-                active:scale-95
-              "
+              className="px-10 py-3 font-bold text-sm uppercase tracking-wider bg-accent hover:bg-accent-hover text-white transition-all duration-200 cursor-pointer shadow-lg active:scale-95"
               style={{ clipPath: "polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)" }}
             >
               Start Training
             </button>
-
             <a
               href={REPO_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="
-                px-10 py-3 font-bold text-sm uppercase tracking-wider
-                bg-white/10 hover:bg-white/20
-                text-gray-300 hover:text-white
-                border border-white/20 hover:border-white/40
-                transition-all duration-200
-                active:scale-95
-              "
+              className="px-10 py-3 font-bold text-sm uppercase tracking-wider bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white border border-white/20 hover:border-white/40 transition-all duration-200 active:scale-95"
               style={{ clipPath: "polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)" }}
             >
               Original Repository

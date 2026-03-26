@@ -223,3 +223,22 @@
 @utility animate-slide-down {
   animation: slide-down 0.3s ease-out both;
 }
+
+@keyframes countdown-pop {
+  0% {
+    opacity: 0;
+    transform: skewX(-6deg) scale(1.6);
+  }
+  20% {
+    opacity: 1;
+    transform: skewX(-6deg) scale(1);
+  }
+  80% {
+    opacity: 1;
+    transform: skewX(-6deg) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: skewX(-6deg) scale(0.7);
+  }
+}

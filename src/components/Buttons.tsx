@@ -9,32 +9,28 @@ export default function Buttons(props: {
   get: () => {
     possibles: { [k: string]: boolean };
     handleInput: (k: string) => void;
+    isTraining: boolean;
+    onStopTraining: () => void;
   };
 }) {
-  const [installPrompt, setInstallPrompt] =
-    useState<BeforeInstallPromptEvent | null>(null);
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
-    // Check if already installed (standalone mode)
     if (window.matchMedia("(display-mode: standalone)").matches) {
       setIsInstalled(true);
       return;
     }
-
     const handleBeforeInstall = (e: Event) => {
       e.preventDefault();
       setInstallPrompt(e as BeforeInstallPromptEvent);
     };
-
     const handleAppInstalled = () => {
       setIsInstalled(true);
       setInstallPrompt(null);
     };
-
     window.addEventListener("beforeinstallprompt", handleBeforeInstall);
     window.addEventListener("appinstalled", handleAppInstalled);
-
     return () => {
       window.removeEventListener("beforeinstallprompt", handleBeforeInstall);
       window.removeEventListener("appinstalled", handleAppInstalled);
@@ -45,16 +41,14 @@ export default function Buttons(props: {
     if (!installPrompt) return;
     await installPrompt.prompt();
     const { outcome } = await installPrompt.userChoice;
-    if (outcome === "accepted") {
-      setIsInstalled(true);
-    }
+    if (outcome === "accepted") setIsInstalled(true);
     setInstallPrompt(null);
   };
 
   return (
     <div className="bg-bg-elevated backdrop-blur-sm border-t border-drawer-border">
       <div className="flex items-center py-3 px-4 landscape:py-2">
-        {/* Install App button - left side, mobile only, hidden if installed */}
+        {/* Install App button */}
         {installPrompt && !isInstalled && (
           <button
             className="
@@ -74,7 +68,7 @@ export default function Buttons(props: {
           </button>
         )}
 
-        {/* Throw break buttons - centered */}
+        {/* Throw break buttons */}
         <div className="flex-1 flex justify-center items-center gap-4 sm:gap-8">
           {Object.keys(props.get().possibles).map((k) => (
             <button
@@ -98,6 +92,25 @@ export default function Buttons(props: {
             </button>
           ))}
         </div>
+
+        {/* Stop Training button */}
+        {props.get().isTraining && (
+          <button
+            className="
+              text-xs text-danger
+              px-3 py-2.5
+              bg-btn-bg border border-danger/40
+              hover:border-danger hover:bg-danger/10
+              active:scale-95
+              transition-all duration-150
+              cursor-pointer select-none
+              whitespace-nowrap uppercase tracking-wider font-bold
+            "
+            onClick={props.get().onStopTraining}
+          >
+            Reload Training
+          </button>
+        )}
       </div>
     </div>
   );

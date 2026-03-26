@@ -1,5 +1,5 @@
-import Main from "./app/Main";
-import UpdatePrompt from "./app/components/UpdatePrompt";
+import Main from "./pages/Main";
+import UpdatePrompt from "./components/UpdatePrompt";
 
 function App() {
   return (

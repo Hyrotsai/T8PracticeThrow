@@ -11,6 +11,7 @@ export default function Center(props: {
     streak: number;
     highestStreak: number;
     correctnessState: Correctness | undefined;
+    isRankingActive: boolean;
   };
 }) {
   const { correctnessState } = props.get();
@@ -30,21 +31,15 @@ export default function Center(props: {
             <div className="flex landscape:flex-col gap-x-4 gap-y-1.5 text-xs sm:text-sm">
               <div className="flex justify-between items-center gap-2">
                 <span className="text-text-muted uppercase tracking-wider text-[10px] font-medium">ANS</span>
-                <span className="text-text-primary font-bold text-sm">
-                  {props.get().lastAnswer || "-"}
-                </span>
+                <span className="text-text-primary font-bold text-sm">{props.get().lastAnswer || "-"}</span>
               </div>
               <div className="flex justify-between items-center gap-2">
                 <span className="text-text-muted uppercase tracking-wider text-[10px] font-medium">IN</span>
-                <span className="text-text-primary font-bold text-sm">
-                  {props.get().lastInput || "-"}
-                </span>
+                <span className="text-text-primary font-bold text-sm">{props.get().lastInput || "-"}</span>
               </div>
               <div className="flex justify-between items-center gap-2">
                 <span className="text-text-muted uppercase tracking-wider text-[10px] font-medium">FRM</span>
-                <span className="text-text-primary font-bold tabular-nums text-sm">
-                  {props.get().lastFrame || "-"}
-                </span>
+                <span className="text-text-primary font-bold tabular-nums text-sm">{props.get().lastFrame || "-"}</span>
               </div>
             </div>
           </div>
@@ -54,33 +49,27 @@ export default function Center(props: {
             <div className="flex landscape:flex-col gap-x-4 gap-y-1.5 text-xs sm:text-sm">
               <div className="flex justify-between items-center gap-2">
                 <span className="text-text-muted uppercase tracking-wider text-[10px] font-medium">STREAK</span>
-                <span className="text-accent font-black text-lg tabular-nums leading-none">
-                  {props.get().streak}
-                </span>
+                <span className="text-accent font-black text-lg tabular-nums leading-none">{props.get().streak}</span>
               </div>
               <div className="flex justify-between items-center gap-2">
                 <span className="text-text-muted uppercase tracking-wider text-[10px] font-medium">BEST</span>
-                <span className="text-text-primary font-black text-lg tabular-nums leading-none">
-                  {props.get().highestStreak}
-                </span>
+                <span className="text-text-primary font-black text-lg tabular-nums leading-none">{props.get().highestStreak}</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Result indicator - always reserves space */}
+        {/* Result indicator */}
         <div className="flex items-center landscape:justify-center landscape:py-1 min-h-[28px]">
           {correctnessState && (
             <div
-              className={`
-                px-3 py-1 rounded-md text-xs font-black uppercase tracking-widest
-                ${correctnessState === Correctness.right
+              className={`px-3 py-1 rounded-md text-xs font-black uppercase tracking-widest ${
+                correctnessState === Correctness.right
                   ? "bg-green-500/20 text-success border border-green-500/30"
                   : correctnessState === Correctness.slow
                   ? "bg-yellow-500/20 text-warning border border-yellow-500/30"
                   : "bg-red-500/20 text-danger border border-red-500/30"
-                }
-              `}
+              }`}
             >
               {correctnessConfig[correctnessState].label}
             </div>
@@ -89,9 +78,7 @@ export default function Center(props: {
 
         {/* History */}
         <div className="hidden landscape:flex flex-col flex-1 min-h-0 mt-2">
-          <div className="text-[10px] uppercase tracking-widest text-accent-muted mb-2 font-bold">
-            History
-          </div>
+          <div className="text-[10px] uppercase tracking-widest text-accent-muted mb-2 font-bold">History</div>
           <div className="flex-1 overflow-y-auto rounded-lg bg-bg-surface border border-border-subtle">
             <table className="text-[11px] w-full">
               <thead className="sticky top-0 bg-bg-elevated backdrop-blur-sm">
@@ -108,35 +95,18 @@ export default function Center(props: {
                   .slice()
                   .reverse()
                   .map((o, i) => (
-                    <tr
-                      key={i}
-                      className={`
-                        text-text-secondary border-t border-border-subtle
-                        ${i % 2 === 0 ? "bg-border-subtle" : ""}
-                      `}
-                    >
+                    <tr key={i} className={`text-text-secondary border-t border-border-subtle ${i % 2 === 0 ? "bg-border-subtle" : ""}`}>
                       <td className="px-2 py-1 tabular-nums">{o.answer}</td>
                       <td className="px-2 py-1 tabular-nums">{o.button}</td>
                       <td className="px-2 py-1 tabular-nums">{o.frame}</td>
                       <td className="px-2 py-1 tabular-nums">{o.streak}</td>
                       <td className="px-1 py-1">
-                        <span
-                          className={`
-                            inline-block w-4 text-center text-[10px] font-bold
-                            ${o.correctness === Correctness.right
-                              ? "text-success"
-                              : o.correctness === Correctness.slow
-                              ? "text-warning"
-                              : "text-danger"
-                            }
-                          `}
-                        >
-                          {o.correctness === Correctness.right
-                            ? "\u2713"
-                            : o.correctness === Correctness.slow
-                            ? "!"
-                            : "\u2717"
-                          }
+                        <span className={`inline-block w-4 text-center text-[10px] font-bold ${
+                          o.correctness === Correctness.right ? "text-success"
+                          : o.correctness === Correctness.slow ? "text-warning"
+                          : "text-danger"
+                        }`}>
+                          {o.correctness === Correctness.right ? "✓" : o.correctness === Correctness.slow ? "!" : "✗"}
                         </span>
                       </td>
                     </tr>

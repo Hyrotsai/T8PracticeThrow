@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import InputHistory from "./InputHistory";
 import RotateDevice from "./RotateDevice";
 import SlicePreview from "./SlicePreview";
-import ThrowBreak from "./components/Game";
+import ThrowBreak from "../components/Game";
 
 export default function Main() {
   return (
