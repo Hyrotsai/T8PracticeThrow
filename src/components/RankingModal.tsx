@@ -180,6 +180,10 @@ export default function RankingModal({
                 <span className="text-accent shrink-0 mt-0.5">→</span>
                 <span>You must use the required config shown above.</span>
               </div>
+              <div className="flex gap-2 items-start text-xs text-text-secondary">
+                <span className="text-accent shrink-0 mt-0.5">→</span>
+                <span>Player side <strong className="text-text-primary">(P1 / P2)</strong> changes randomly on each throw.</span>
+              </div>
             </div>
 
             {/* Nick input */}

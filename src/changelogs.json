@@ -1,5 +1,15 @@
 [
   {
+    "version": "1.2.0",
+    "date": "2026-03-30",
+    "entries": [
+      {
+        "type": "new",
+        "text": "Ranking mode now randomizes P1/P2 side on every throw — both sides must be mastered to climb the leaderboard"
+      }
+    ]
+  },
+  {
     "version": "1.1.0",
     "date": "2026-03-26",
     "entries": [

@@ -32,6 +32,8 @@ export let inputTimeout: ReturnType<typeof setTimeout>;
 export let keysPressed: { [k: string]: boolean } = {};
 export let controllerCleanup: (() => void) | null = null;
 export let rankingMode = false;
+// null = use isP1 state normally; true/false = per-round random side override (ranking only)
+export let rankingSide: boolean | null = null;
 export let onKeyDownHelper: (key: string, pressed: boolean) => void = () => null;
 
 // Snapshot of user config saved just before entering ranking mode
@@ -249,8 +251,10 @@ export function useGame({ mainRef, backupRef, onStartTraining, isTraining }: Use
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const getPath = (choice: string) =>
-    `${VIDEO_BASE_URL}/${isP1 ? 'p1' : 'p2'}/${isStanding ? 'standing' : 'grounded'}/${choice.replace('+', '')}.mp4`;
+  const getPath = (choice: string, sideOverride?: boolean) => {
+    const side = sideOverride !== undefined ? sideOverride : (rankingSide !== null ? rankingSide : isP1);
+    return `${VIDEO_BASE_URL}/${side ? 'p1' : 'p2'}/${isStanding ? 'standing' : 'grounded'}/${choice.replace('+', '')}.mp4`;
+  };
 
   const prepVideo = () => {
     if (!initialized) return;
@@ -259,9 +263,13 @@ export function useGame({ mainRef, backupRef, onStartTraining, isTraining }: Use
       .map(([k, v]) => ({ k, v }))
       .filter(({ v }) => v)
       .map(({ k }) => k);
-    const missing = choices
-      .map((choice) => getPath(choice))
-      .filter((p) => videoCache[p] === undefined);
+
+    // In ranking mode, pre-cache both P1 and P2 paths so no loading mid-run
+    const pathsToCache = rankingMode
+      ? [true, false].flatMap((side) => choices.map((c) => getPath(c, side)))
+      : choices.map((c) => getPath(c));
+
+    const missing = pathsToCache.filter((p) => videoCache[p] === undefined);
     if (missing.length > 0) {
       updateIsLoading(true);
       Promise.all(
@@ -284,6 +292,12 @@ export function useGame({ mainRef, backupRef, onStartTraining, isTraining }: Use
         });
       return;
     }
+
+    // Pick a random side for this round when in ranking mode
+    if (rankingMode) {
+      rankingSide = Math.random() < 0.5;
+    }
+
     const nextChoice = choices[Math.floor(Math.random() * choices.length)];
     if (nextChoice === undefined) return;
     updateStreak(nextStreak);
@@ -459,6 +473,7 @@ export function useGame({ mainRef, backupRef, onStartTraining, isTraining }: Use
     if (mainRef.current) mainRef.current.playbackRate = defaultSpeed;
     updateFailDelay(GAME_CONFIG.incorrectSleepMs);  // 2000
     setIsRankingActive(true);
+    rankingSide = null;
     updateCountdown(3);
     let count: 3 | 2 | 1 = 3;
     const tick = () => {
@@ -503,6 +518,7 @@ export function useGame({ mainRef, backupRef, onStartTraining, isTraining }: Use
       preRankingConfig = null;
     }
     // Clean up game state
+    rankingSide = null;
     updateCorrectnessState(undefined);
     updateLastAnswer('');
     updateLastInput('');
