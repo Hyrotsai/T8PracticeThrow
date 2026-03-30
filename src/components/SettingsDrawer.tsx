@@ -930,7 +930,7 @@ export default function SettingsDrawer(props: {
                 <path d="M12 16v-4" />
                 <path d="M12 8h.01" />
               </svg>
-              Intro
+              Intro / Help
             </button>
           </div>
 
