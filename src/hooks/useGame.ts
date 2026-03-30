@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { GAME_CONFIG, VIDEO_BASE_URL, STORAGE_KEYS, params, MAX_SAVED_SESSIONS, type SessionSummary } from '../config';
 import { playCorrect, playSlow, playWrong } from '../utils/soundFeedback';
-import { submitScore, DEFAULT_RANKING_CONFIG } from '../services/rankingService';
+import { submitScore, DEFAULT_RANKING_CONFIG, type RankingMode } from '../services/rankingService';
 import ControllerListener from '../utils/controllerListener';
 import { NICK_KEY } from '../components/RankingModal';
 
@@ -34,6 +34,8 @@ export let controllerCleanup: (() => void) | null = null;
 export let rankingMode = false;
 // null = use isP1 state normally; true/false = per-round random side override (ranking only)
 export let rankingSide: boolean | null = null;
+// active ranking mode ('p1' | 'p2' | 'mixed'), set when ranking starts
+export let rankingCurrentMode: RankingMode = 'mixed';
 export let onKeyDownHelper: (key: string, pressed: boolean) => void = () => null;
 
 // Snapshot of user config saved just before entering ranking mode
@@ -376,7 +378,7 @@ export function useGame({ mainRef, backupRef, onStartTraining, isTraining }: Use
       if (nick && isDefaultConfig) {
         updateSyncState('syncing');
         if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
-        submitScore(nick, streak)
+        submitScore(nick, streak, rankingCurrentMode)
           .then((result) => {
             updateSyncState(result === 'updated' ? 'updated' : result === 'ignored' ? 'ignored' : 'saved');
             onSyncCompleteRef.current();
@@ -443,7 +445,7 @@ export function useGame({ mainRef, backupRef, onStartTraining, isTraining }: Use
     );
   };
 
-  const startRanking = (nick: string) => {
+  const startRanking = (nick: string, mode: RankingMode = 'mixed') => {
     localStorage.setItem(NICK_KEY, nick);
     historyLog.length = 0;
     nextStreak = 0;
@@ -462,7 +464,15 @@ export function useGame({ mainRef, backupRef, onStartTraining, isTraining }: Use
       failDelay,
     };
     // Reset to default config — ranking must always use the same settings
-    updateIsP1(true);
+    // For P1 mode: fix to P1. For P2 mode: fix to P2. For mixed: random per throw.
+    if (mode === 'p1') {
+      updateIsP1(true);
+    } else if (mode === 'p2') {
+      updateIsP1(false);
+    } else {
+      // mixed — isP1 value doesn't matter, rankingSide will override per round
+      updateIsP1(true);
+    }
     updateIsStanding(true);
     updatePossibles({ '1': true, '2': true, '1+2': true });
     // updateSpeed needs mainRef; force the module var and localStorage directly as well
@@ -474,6 +484,7 @@ export function useGame({ mainRef, backupRef, onStartTraining, isTraining }: Use
     updateFailDelay(GAME_CONFIG.incorrectSleepMs);  // 2000
     setIsRankingActive(true);
     rankingSide = null;
+    rankingCurrentMode = mode;
     updateCountdown(3);
     let count: 3 | 2 | 1 = 3;
     const tick = () => {

@@ -27,6 +27,7 @@ import {
   setInitialized,
   onKeyDownHelper,
   saveCurrentSession,
+  rankingCurrentMode,
 } from '../hooks/useGame';
 import type { Theme } from '../hooks/useGame';
 
@@ -281,7 +282,7 @@ function Helper({ children, mainRef, backupRef, onStartTraining, onStopTraining,
                         onClick={() => {
                           updateSyncState('idle');
                           const nick = localStorage.getItem(STORAGE_KEYS.rankingNick) ?? '';
-                          startRanking(nick);
+                          startRanking(nick, rankingCurrentMode);
                         }}
                         className='px-8 py-3 text-sm font-black uppercase tracking-widest italic bg-accent text-bg-primary border-2 border-accent hover:brightness-110 hover:scale-105 active:scale-95 transition-all duration-150 cursor-pointer select-none shadow-lg shadow-accent/30'
                         style={{ clipPath: 'polygon(6% 0, 100% 0, 94% 100%, 0 100%)' }}

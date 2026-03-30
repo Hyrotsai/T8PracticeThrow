@@ -15,7 +15,7 @@ export interface SessionSummary {
 }
 
 // ─── App Identity ────────────────────────────────────────────
-export const VERSION = "1.2.0";
+export const VERSION = "1.2.1";
 
 // ─── Game Timing / Logic ─────────────────────────────────────
 export const GAME_CONFIG = {

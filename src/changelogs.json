@@ -1,11 +1,23 @@
 [
   {
-    "version": "1.2.0",
+    "version": "1.2.1",
     "date": "2026-03-30",
     "entries": [
       {
         "type": "new",
-        "text": "Ranking mode now randomizes P1/P2 side on every throw — both sides must be mastered to climb the leaderboard"
+        "text": "Ranking now has three separate leaderboards: P1, P2, and P1+P2 (random side per throw)"
+      },
+      {
+        "type": "new",
+        "text": "Choose your ranking mode before starting — each mode tracks scores independently"
+      },
+      {
+        "type": "improved",
+        "text": "Ranking modal defaults to P1 mode on open"
+      },
+      {
+        "type": "fixed",
+        "text": "Leaderboard tabs now load the correct data for each mode"
       }
     ]
   },

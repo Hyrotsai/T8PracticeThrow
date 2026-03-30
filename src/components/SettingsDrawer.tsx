@@ -3,16 +3,22 @@ import type { Theme } from "./Game";
 import { historyLog, Correctness } from "./Game";
 import { VERSION, SPEED_LIMITS, FAIL_DELAY_LIMITS, STORAGE_KEYS } from "../config";
 import RankingModal from "./RankingModal";
-import { getTopTen, type RankingEntry } from "../services/rankingService";
+import { getTopTen, type RankingEntry, type RankingMode } from "../services/rankingService";
 import { loadSessionHistory } from "../hooks/useGame";
 import type { SessionSummary } from "../config";
 import ChangelogModal, { hasUnseenChangelog } from "./ChangelogModal";
 
 const RANKING_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
-function loadCachedRanking(): { entries: RankingEntry[]; ts: number } | null {
+const RANKING_CACHE_KEYS: Record<RankingMode, string> = {
+  p1: STORAGE_KEYS.rankingCache + '_p1',
+  p2: STORAGE_KEYS.rankingCache + '_p2',
+  mixed: STORAGE_KEYS.rankingCache + '_mixed',
+};
+
+function loadCachedRanking(mode: RankingMode): { entries: RankingEntry[]; ts: number } | null {
   try {
-    const raw = localStorage.getItem(STORAGE_KEYS.rankingCache);
+    const raw = localStorage.getItem(RANKING_CACHE_KEYS[mode]);
     if (!raw) return null;
     return JSON.parse(raw);
   } catch {
@@ -20,9 +26,9 @@ function loadCachedRanking(): { entries: RankingEntry[]; ts: number } | null {
   }
 }
 
-function saveCachedRanking(entries: RankingEntry[]) {
+function saveCachedRanking(entries: RankingEntry[], mode: RankingMode) {
   try {
-    localStorage.setItem(STORAGE_KEYS.rankingCache, JSON.stringify({ entries, ts: Date.now() }));
+    localStorage.setItem(RANKING_CACHE_KEYS[mode], JSON.stringify({ entries, ts: Date.now() }));
   } catch { /* ignore quota errors */ }
 }
 
@@ -50,7 +56,7 @@ export default function SettingsDrawer(props: {
     updateTheme: (theme: Theme) => void;
     onEditInputs: () => void;
     onIntro: () => void;
-    onStartRanking: (nick: string) => void;
+    onStartRanking: (nick: string, mode: RankingMode) => void;
     isRankingActive: boolean;
     onSyncComplete: (cb: () => void) => void;
     onStatsOpen: () => void;
@@ -105,39 +111,44 @@ export default function SettingsDrawer(props: {
   };
 
   // Pre-load ranking data on mount, and register refresh callback
-  const [rankingEntries, setRankingEntries] = useState<RankingEntry[]>(() => {
-    const cached = loadCachedRanking();
-    return cached ? cached.entries : [];
-  });
-  const [rankingLoading, setRankingLoading] = useState(() => {
-    const cached = loadCachedRanking();
-    // If cache is fresh (< TTL), don't show loading spinner on mount
-    return !cached || Date.now() - cached.ts > RANKING_CACHE_TTL_MS;
+  const [rankingEntriesByMode, setRankingEntriesByMode] = useState<Record<RankingMode, RankingEntry[]>>(() => ({
+    p1: loadCachedRanking('p1')?.entries ?? [],
+    p2: loadCachedRanking('p2')?.entries ?? [],
+    mixed: loadCachedRanking('mixed')?.entries ?? [],
+  }));
+  const [rankingLoadingByMode, setRankingLoadingByMode] = useState<Record<RankingMode, boolean>>(() => {
+    const isFresh = (m: RankingMode) => {
+      const cached = loadCachedRanking(m);
+      return cached ? Date.now() - cached.ts < RANKING_CACHE_TTL_MS : false;
+    };
+    return { p1: !isFresh('p1'), p2: !isFresh('p2'), mixed: !isFresh('mixed') };
   });
   const [rankingError, setRankingError] = useState(false);
 
   const refreshRanking = (force = false) => {
-    const cached = loadCachedRanking();
-    if (!force && cached && Date.now() - cached.ts < RANKING_CACHE_TTL_MS) {
-      setRankingEntries(cached.entries);
-      setRankingLoading(false);
-      return;
-    }
-    setRankingLoading(true);
+    const modes: RankingMode[] = ['p1', 'p2', 'mixed'];
     setRankingError(false);
-    getTopTen()
-      .then((entries) => {
-        setRankingEntries(entries);
-        saveCachedRanking(entries);
-        setRankingError(false);
-      })
-      .catch(() => {
-        // Keep showing cached data if available
-        const fallback = loadCachedRanking();
-        if (fallback) setRankingEntries(fallback.entries);
-        setRankingError(true);
-      })
-      .finally(() => setRankingLoading(false));
+    modes.forEach((mode) => {
+      const cached = loadCachedRanking(mode);
+      if (!force && cached && Date.now() - cached.ts < RANKING_CACHE_TTL_MS) {
+        setRankingEntriesByMode((prev) => ({ ...prev, [mode]: cached.entries }));
+        setRankingLoadingByMode((prev) => ({ ...prev, [mode]: false }));
+        return;
+      }
+      setRankingLoadingByMode((prev) => ({ ...prev, [mode]: true }));
+      getTopTen(mode)
+        .then((entries) => {
+          setRankingEntriesByMode((prev) => ({ ...prev, [mode]: entries }));
+          saveCachedRanking(entries, mode);
+          setRankingLoadingByMode((prev) => ({ ...prev, [mode]: false }));
+        })
+        .catch(() => {
+          const fallback = loadCachedRanking(mode);
+          if (fallback) setRankingEntriesByMode((prev) => ({ ...prev, [mode]: fallback.entries }));
+          setRankingLoadingByMode((prev) => ({ ...prev, [mode]: false }));
+          setRankingError(true);
+        });
+    });
   };
 
   useEffect(() => {
@@ -190,9 +201,9 @@ export default function SettingsDrawer(props: {
       {circleOpen && (
         <RankingModal
           onClose={() => closeCircle()}
-          onStartRanking={(nick) => { closeCircle(); props.get().onStartRanking(nick); }}
-          entries={rankingEntries}
-          loadingRanking={rankingLoading}
+          onStartRanking={(nick, mode) => { closeCircle(); props.get().onStartRanking(nick, mode); }}
+          entriesByMode={rankingEntriesByMode}
+          loadingByMode={rankingLoadingByMode}
           rankingError={rankingError}
         />
       )}

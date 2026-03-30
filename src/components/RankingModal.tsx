@@ -2,10 +2,17 @@ import { useState } from 'react';
 import {
   DEFAULT_RANKING_CONFIG,
   type RankingEntry,
+  type RankingMode,
 } from '../services/rankingService';
 import { STORAGE_KEYS } from '../config';
 
 export const NICK_KEY = STORAGE_KEYS.rankingNick;
+
+const MODES: { value: RankingMode; label: string }[] = [
+  { value: 'p1', label: 'P1' },
+  { value: 'p2', label: 'P2' },
+  { value: 'mixed', label: 'P1+P2' },
+];
 
 function Medal({ pos }: { pos: number }) {
   if (pos === 1) return <span className="text-yellow-400 font-black text-base leading-none">1</span>;
@@ -39,28 +46,80 @@ function MedalIcon({ pos }: { pos: number }) {
   return null;
 }
 
+function LeaderboardTable({
+  entries,
+  loading,
+}: {
+  entries: RankingEntry[];
+  loading: boolean;
+}) {
+  if (loading) {
+    return (
+      <div className="flex-1 flex items-center justify-center gap-2 text-text-muted">
+        <div className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+        <span className="text-xs uppercase tracking-widest">Loading...</span>
+      </div>
+    );
+  }
+  if (entries.length === 0) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center gap-2 text-center text-text-muted">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 opacity-40">
+          <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" /><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" /><path d="M4 22h16" /><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+        </svg>
+        <p className="text-xs">No entries yet.</p>
+        <p className="text-xs opacity-60">Be the first!</p>
+      </div>
+    );
+  }
+  return (
+    <div className="flex flex-col gap-1">
+      {entries.map((e, i) => (
+        <div
+          key={e.id}
+          className={`flex items-center gap-3 px-3 py-2 rounded-lg border ${
+            i === 0 ? 'bg-yellow-500/10 border-yellow-500/30'
+            : i === 1 ? 'bg-slate-400/10 border-slate-400/20'
+            : i === 2 ? 'bg-amber-700/10 border-amber-700/20'
+            : 'bg-bg-surface border-border-subtle'
+          }`}
+        >
+          <div className="w-5 flex items-center justify-center shrink-0">
+            <Medal pos={i + 1} />
+          </div>
+          {i < 3 && <MedalIcon pos={i + 1} />}
+          <span className="flex-1 text-sm font-bold text-text-primary truncate">{e.nick}</span>
+          <span className="tabular-nums font-black text-accent text-base shrink-0">{e.score}</span>
+          <span className="text-[10px] text-text-muted uppercase tracking-wider shrink-0">streak</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function RankingModal({
   onClose,
   onStartRanking,
-  entries,
-  loadingRanking,
+  entriesByMode,
+  loadingByMode,
   rankingError,
 }: {
   onClose: () => void;
-  onStartRanking: (nick: string) => void;
-  entries: RankingEntry[];
-  loadingRanking: boolean;
+  onStartRanking: (nick: string, mode: RankingMode) => void;
+  entriesByMode: Record<RankingMode, RankingEntry[]>;
+  loadingByMode: Record<RankingMode, boolean>;
   rankingError?: boolean;
 }) {
   const [nick, setNick] = useState(localStorage.getItem(NICK_KEY) ?? '');
   const [nickError, setNickError] = useState('');
+  const [activeTab, setActiveTab] = useState<RankingMode>('p1');
 
   const handleJoin = () => {
     const trimmed = nick.trim();
     if (trimmed.length === 0) { setNickError('Nick cannot be empty.'); return; }
     if (trimmed.length < 3) { setNickError('Minimum 3 characters.'); return; }
     onClose();
-    onStartRanking(trimmed);
+    onStartRanking(trimmed, activeTab);
   };
 
   const cfg = DEFAULT_RANKING_CONFIG;
@@ -69,7 +128,7 @@ export default function RankingModal({
     <div className="fixed inset-0 z-[1001] flex items-center justify-center" onClick={onClose}>
       <div className="absolute inset-0 bg-bg-overlay backdrop-blur-sm" />
       <div
-        className="relative z-10 w-[90vw] max-w-3xl h-[80vh] max-h-[600px] bg-bg-card border border-accent-border shadow-2xl flex flex-col overflow-hidden"
+        className="relative z-10 w-[90vw] max-w-3xl h-[80vh] max-h-[640px] bg-bg-card border border-accent-border shadow-2xl flex flex-col overflow-hidden"
         style={{ clipPath: 'polygon(12px 0, 100% 0, calc(100% - 12px) 100%, 0 100%)' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -91,57 +150,61 @@ export default function RankingModal({
           </button>
         </div>
 
+        {/* Mode tabs */}
+        <div className="flex shrink-0 border-b border-drawer-border">
+          {MODES.map((m) => (
+            <button
+              key={m.value}
+              onClick={() => setActiveTab(m.value)}
+              className={`flex-1 py-2.5 text-xs font-black uppercase tracking-widest transition-colors cursor-pointer ${
+                activeTab === m.value
+                  ? 'text-accent border-b-2 border-accent bg-accent/5'
+                  : 'text-text-muted hover:text-text-secondary'
+              }`}
+            >
+              {m.label}
+            </button>
+          ))}
+        </div>
+
         {/* Body */}
         <div className="flex-1 flex min-h-0 divide-x divide-drawer-border">
           {/* LEFT — Ranking table */}
           <div className="flex-1 flex flex-col min-w-0 p-4 overflow-y-auto">
-            <p className="text-[10px] uppercase tracking-widest text-accent-muted font-bold mb-3">Top 10 — Best streak</p>
-            {rankingError && entries.length > 0 && (
+            <p className="text-[10px] uppercase tracking-widest text-accent-muted font-bold mb-3">
+              Top 10 — Best streak
+              {activeTab === 'p1' && ' · P1 side'}
+              {activeTab === 'p2' && ' · P2 side'}
+              {activeTab === 'mixed' && ' · P1+P2 random'}
+            </p>
+            {rankingError && entriesByMode[activeTab].length > 0 && (
               <p className="text-[10px] text-warning uppercase tracking-widest font-bold mb-2">
                 Offline — showing cached data
               </p>
             )}
-            {loadingRanking ? (
-              <div className="flex-1 flex items-center justify-center gap-2 text-text-muted">
-                <div className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-                <span className="text-xs uppercase tracking-widest">Loading...</span>
-              </div>
-            ) : entries.length === 0 ? (
-              <div className="flex-1 flex flex-col items-center justify-center gap-2 text-center text-text-muted">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 opacity-40">
-                  <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" /><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" /><path d="M4 22h16" /><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
-                </svg>
-                <p className="text-xs">No entries yet.</p>
-                <p className="text-xs opacity-60">Be the first!</p>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-1">
-                {entries.map((e, i) => (
-                  <div
-                    key={e.id}
-                    className={`flex items-center gap-3 px-3 py-2 rounded-lg border ${
-                      i === 0 ? 'bg-yellow-500/10 border-yellow-500/30'
-                      : i === 1 ? 'bg-slate-400/10 border-slate-400/20'
-                      : i === 2 ? 'bg-amber-700/10 border-amber-700/20'
-                      : 'bg-bg-surface border-border-subtle'
-                    }`}
-                  >
-                    <div className="w-5 flex items-center justify-center shrink-0">
-                      <Medal pos={i + 1} />
-                    </div>
-                    {i < 3 && <MedalIcon pos={i + 1} />}
-                    <span className="flex-1 text-sm font-bold text-text-primary truncate">{e.nick}</span>
-                    <span className="tabular-nums font-black text-accent text-base shrink-0">{e.score}</span>
-                    <span className="text-[10px] text-text-muted uppercase tracking-wider shrink-0">streak</span>
-                  </div>
-                ))}
-              </div>
-            )}
+            <LeaderboardTable
+              entries={entriesByMode[activeTab]}
+              loading={loadingByMode[activeTab]}
+            />
           </div>
 
           {/* RIGHT — Registration */}
           <div className="flex-1 flex flex-col min-w-0 p-4 gap-4 overflow-y-auto">
             <p className="text-[10px] uppercase tracking-widest text-accent-muted font-bold">Join</p>
+
+            {/* Mode description */}
+            <div className="bg-accent/5 border border-accent/20 rounded-lg px-3 py-2 flex flex-col gap-0.5">
+              <p className="text-[10px] uppercase tracking-widest text-accent font-black">
+                {activeTab === 'p1' && 'Mode: P1 side'}
+                {activeTab === 'p2' && 'Mode: P2 side'}
+                {activeTab === 'mixed' && 'Mode: P1+P2 random'}
+              </p>
+              <p className="text-xs text-text-muted">
+                {activeTab === 'p1' && 'Every throw plays from the P1 perspective.'}
+                {activeTab === 'p2' && 'Every throw plays from the P2 perspective.'}
+                {activeTab === 'mixed' && 'P1 or P2 side is randomized on every throw.'}
+              </p>
+            </div>
 
             {/* Config requirements */}
             <div className="bg-bg-surface border border-border-subtle rounded-lg px-4 py-3 flex flex-col gap-2">
@@ -178,11 +241,7 @@ export default function RankingModal({
               </div>
               <div className="flex gap-2 items-start text-xs text-text-secondary">
                 <span className="text-accent shrink-0 mt-0.5">→</span>
-                <span>You must use the required config shown above.</span>
-              </div>
-              <div className="flex gap-2 items-start text-xs text-text-secondary">
-                <span className="text-accent shrink-0 mt-0.5">→</span>
-                <span>Player side <strong className="text-text-primary">(P1 / P2)</strong> changes randomly on each throw.</span>
+                <span>Each mode has its own separate leaderboard.</span>
               </div>
             </div>
 
@@ -207,7 +266,10 @@ export default function RankingModal({
               className="w-full py-3 text-sm font-black uppercase tracking-widest italic bg-accent text-bg-primary border-2 border-accent hover:brightness-110 hover:scale-[1.02] active:scale-95 transition-all duration-150 cursor-pointer select-none shadow-lg shadow-accent/20"
               style={{ clipPath: 'polygon(6% 0, 100% 0, 94% 100%, 0 100%)' }}
             >
-              Start as {nick.trim() || '...'}
+              Start as {nick.trim() || '...'}{' '}
+              <span className="opacity-70 text-[11px] not-italic normal-case">
+                ({activeTab === 'mixed' ? 'P1+P2' : activeTab.toUpperCase()})
+              </span>
             </button>
           </div>
         </div>
