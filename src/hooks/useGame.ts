@@ -266,8 +266,9 @@ export function useGame({ mainRef, backupRef, onStartTraining, isTraining }: Use
       .filter(({ v }) => v)
       .map(({ k }) => k);
 
-    // In ranking mode, pre-cache both P1 and P2 paths so no loading mid-run
-    const pathsToCache = rankingMode
+    // In mixed ranking mode, pre-cache both P1 and P2 paths so no loading mid-run.
+    // For p1/p2 modes, only cache the fixed side.
+    const pathsToCache = (rankingMode && rankingCurrentMode === 'mixed')
       ? [true, false].flatMap((side) => choices.map((c) => getPath(c, side)))
       : choices.map((c) => getPath(c));
 
@@ -295,8 +296,8 @@ export function useGame({ mainRef, backupRef, onStartTraining, isTraining }: Use
       return;
     }
 
-    // Pick a random side for this round when in ranking mode
-    if (rankingMode) {
+    // Only randomize side in mixed mode; p1/p2 modes use the fixed isP1 value
+    if (rankingMode && rankingCurrentMode === 'mixed') {
       rankingSide = Math.random() < 0.5;
     }
 

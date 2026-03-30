@@ -1,5 +1,15 @@
 [
   {
+    "version": "1.2.2",
+    "date": "2026-03-30",
+    "entries": [
+      {
+        "type": "fixed",
+        "text": "Ranking P1 and P2 modes now correctly show only the selected side — P1 no longer shows P2 videos and vice versa"
+      }
+    ]
+  },
+  {
     "version": "1.2.1",
     "date": "2026-03-30",
     "entries": [
